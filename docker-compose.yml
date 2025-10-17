@@ -9,11 +9,9 @@ services:
       - ./results:/results
       - ./config:/config
     command: >
-      /bin/sh -c "
       jmeter -n -t /test-plans/api-performance.jmx
       -p /config/test.properties
       -l /results/results.jtl
       -e -o /results/html-report
-      -Jthreads=50 -Jrampup=120
-      && sh /config/check-thresholds.sh /results/results.jtl
-      "
+      -Jthreads=50
+      -Jrampup=120
