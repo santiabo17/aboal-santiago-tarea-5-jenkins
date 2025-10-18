@@ -61,7 +61,7 @@ pipeline {
                         -t /work/jmeter/${TEST_PLAN_FILE} \
                         -l /work/out/results.jtl \
                         -e -o /work/out/jmeter-report
-
+                        -f
                     JMETER_EXIT_CODE=\$?
                     echo "=== JMeter exit code: \$JMETER_EXIT_CODE ==="
                     
