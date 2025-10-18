@@ -4,7 +4,16 @@ services:
   jmeter-master:
     image: justb4/jmeter:latest
     container_name: jmeter-performance
+    command: >
+      -n -t /test-plans/api-performance.jmx
+         -l /results/results.jtl
+         -e -o /results/html-report
+         -Jthreads=50
+         -Jrampup=120
+         -Jbase.url=httpbin.org
+         -f
     volumes:
       - ./test-plans:/test-plans
       - ./results:/results
       - ./config:/config
+    user: "0"
