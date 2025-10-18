@@ -60,8 +60,9 @@ pipeline {
                     docker exec ${JMETER_CONTAINER_NAME} jmeter -n \
                         -t /work/jmeter/${TEST_PLAN_FILE} \
                         -l /work/out/results.jtl \
-                        -e -o /work/out/jmeter-report
-                        -f
+                        -e -o /work/out/jmeter-report \
+                        -f \
+                        -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org
                     JMETER_EXIT_CODE=\$?
                     echo "=== JMeter exit code: \$JMETER_EXIT_CODE ==="
                     
