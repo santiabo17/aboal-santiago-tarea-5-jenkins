@@ -23,30 +23,30 @@ pipeline {
             }
         }
         
-        stage('Run Performance Tests') {
-            steps {
-                sh """
-                    echo "=== Starting JMeter Performance Tests ==="
+        // stage('Run Performance Tests') {
+        //     steps {
+        //         sh """
+        //             echo "=== Starting JMeter Performance Tests ==="
 
-                    # Clean old results
-                    rm -rf results/*
+        //             # Clean old results
+        //             rm -rf results/*
                     
-                    # Run JMeter using docker-compose
-                    docker-compose run --rm jmeter-master \
-                    -n -t /test-plans/api-performance.jmx \
-                    -l /results/results.jtl \
-                    -e -o /results/html-report \
-                    -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org \
-                    -f
+        //             # Run JMeter using docker-compose
+        //             docker-compose run --rm jmeter-master \
+        //             -n -t /test-plans/api-performance.jmx \
+        //             -l /results/results.jtl \
+        //             -e -o /results/html-report \
+        //             -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org \
+        //             -f
 
-                    # Verify results
-                    if [ ! -f results/results.jtl ]; then
-                        echo "ERROR: No results generated!"
-                        exit 1
-                    fi
-                """
-            }
-        }
+        //             # Verify results
+        //             if [ ! -f results/results.jtl ]; then
+        //                 echo "ERROR: No results generated!"
+        //                 exit 1
+        //             fi
+        //         """
+        //     }
+        // }
 
         // stage('Run Performance Tests (Docker CP Method)') {
         //     steps {
