@@ -6,9 +6,9 @@ services:
     container_name: jmeter-performance
     user: "0"
     volumes:
-      - ${PWD}/test-plans:/test-plans
-      - ${PWD}/results:/results
-      - ${PWD}/config:/config
+      - ./test-plans:/test-plans
+      - ./results:/results
+      - ./config:/config
     command: >
       -n -t /test-plans/api-performance.jmx
       -l /results/results.jtl
