@@ -4,6 +4,7 @@ services:
   jmeter-master:
     image: justb4/jmeter:latest
     container_name: jmeter-performance
+    user: "0"
     volumes:
       - ./test-plans:/test-plans
       - ./results:/results
