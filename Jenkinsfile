@@ -23,19 +23,27 @@ pipeline {
 
         stage('Run JMeter tests') {
             steps {
-                echo "--- 3. ADVANCED DEBUG: Checking permissions INSIDE the container ---"
-        
-                // Use '--entrypoint sh' to override JMeter and run a shell instead.
-                sh "docker compose run --rm --entrypoint sh jmeter-master -c 'ls -al /test-plans/ && whoami'"
-                
-                echo "--- 1. Verification: Checking host path './test-plans' ---"
+                echo "--- 1. Verification (Host): Checking if file exists on host ---"
+                // This must succeed. If it fails, SCM checkout is the problem.
                 sh 'ls -al ./test-plans/api-performance.jmx'
-                
-                echo "--- 2. Permission Fix: Ensuring container can read files ---"
+
+                echo "--- 2. Permission Fix (Host): Granting all users read access ---"
+                // Fix permissions on host before mounting
                 sh 'chmod -R a+rX ./test-plans'
-            
-                // Runs your JMeter container, executes the tests, and exits
-                sh 'docker compose up --build --exit-code-from jmeter-master'
+                
+                // --- THE CRITICAL FIX: EXPLICITLY PASSING WORKSPACE ---
+                echo "--- 3. Execution: Setting absolute path and running docker compose ---"
+                
+                // This multi-line step is the most reliable way to inject the absolute path.
+                sh '''
+                    # 3a. Set the absolute path variable for docker-compose substitution
+                    export JENKINS_WORKSPACE_PATH="${WORKSPACE}"
+                    
+                    # 3b. Run build and start the test container. 
+                    # The YAML (must be updated) will use ${JENKINS_WORKSPACE_PATH}
+                    docker compose build jmeter-master
+                    docker compose up --build --exit-code-from jmeter-master
+                '''
             }
         }
 
