@@ -8,10 +8,8 @@ pipeline {
         TEST_PLAN_DIR = 'jmeter/test-plans'
         RESULTS_DIR = 'results'
         
-        # NOTE: Ensure the test plan name is correct
         TEST_PLAN_FILE = 'api-performance.jmx' 
         
-        # Path for results on the host (Jenkins workspace)
         OUT_DIR = "${WORKSPACE}/${RESULTS_DIR}"
     }
 
