@@ -41,7 +41,7 @@ pipeline {
                     #     ${JMETER_IMAGE} infinity
 
                     docker run --rm -v $PWD:/test -w /test \
-                        justb4/jmeter:5.6.3 \
+                        ${JMETER_IMAGE} \
                         -n -t test-plans/api-performance.jmx \
                         -p config/test.properties \
                         -l results/results.csv
