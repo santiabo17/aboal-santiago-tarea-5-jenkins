@@ -62,7 +62,7 @@ pipeline {
                         -l /work/out/results.jtl \
                         -e -o /work/out/jmeter-report \
                         -f \
-                        -p /work/jmeter/${TEST_CONFIG_FILE} \
+                        -q /work/jmeter/${TEST_CONFIG_FILE} \
                     # -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org
                     JMETER_EXIT_CODE=\$?
                     echo "=== JMeter exit code: \$JMETER_EXIT_CODE ==="
