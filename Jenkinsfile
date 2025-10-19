@@ -5,7 +5,7 @@ pipeline {
         // Define key variables used in the script
         JMETER_IMAGE = 'justb4/jmeter:latest' // Or your image name
         JMETER_CONTAINER_NAME = "jmeter-performance-${BUILD_NUMBER}"
-        TEST_PLAN_DIR = 'jmeter/test-plans'
+        TEST_PLAN_DIR = 'test-plans'
         RESULTS_DIR = 'results'
         
         TEST_PLAN_FILE = 'api-performance.jmx' 
