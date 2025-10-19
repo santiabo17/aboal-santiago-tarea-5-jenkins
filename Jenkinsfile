@@ -87,8 +87,8 @@ pipeline {
             steps {
                 sh '''
                     docker exec ${JMETER_CONTAINER_NAME} sh -c "
-                        chmod +x /work/jmeter/check.threesholds.sh &&
-                        /work/jmeter/check.threesholds.sh /work/out/results.csv
+                        chmod +x /work/jmeter/check.thresholds.sh &&
+                        /work/jmeter/check.thresholds.sh /work/out/results.csv
                     "
 
                     Clean up and remove container
