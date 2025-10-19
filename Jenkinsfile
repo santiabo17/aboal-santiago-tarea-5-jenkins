@@ -34,11 +34,11 @@ pipeline {
                     docker rm -f ${JMETER_CONTAINER_NAME} >/dev/null 2>&1 || true
 
                     # 3. Create and start container in background (using a non-root user for security, if possible)
-                    // docker run -d \
-                    //     --name ${JMETER_CONTAINER_NAME} \
-                    //     --user=root \
-                    //     --entrypoint=sleep \
-                    //     ${JMETER_IMAGE} infinity
+                    # docker run -d \
+                    #     --name ${JMETER_CONTAINER_NAME} \
+                    #     --user=root \
+                    #     --entrypoint=sleep \
+                    #     ${JMETER_IMAGE} infinity
 
                     docker run --rm -v $PWD:/test -w /test \
                         justb4/jmeter:5.6.3 \
@@ -67,7 +67,7 @@ pipeline {
                         -e -o /work/out/jmeter-report \
                         -f \
                         -p /work/jmeter/config/test.properties \
-                        // -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org
+                    # -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org
                     JMETER_EXIT_CODE=\$?
                     echo "=== JMeter exit code: \$JMETER_EXIT_CODE ==="
                     
