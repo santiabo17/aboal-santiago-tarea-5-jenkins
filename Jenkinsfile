@@ -66,7 +66,8 @@ pipeline {
                         -l /work/out/results.jtl \
                         -e -o /work/out/jmeter-report \
                         -f \
-                        -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org
+                        -p /work/jmeter/config/test.properties \
+                        // -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org
                     JMETER_EXIT_CODE=\$?
                     echo "=== JMeter exit code: \$JMETER_EXIT_CODE ==="
                     
@@ -89,22 +90,22 @@ pipeline {
                 """
             }
         }
+
+        stage('Check Thresholds') {
+            steps {
+                sh '''
+                    echo "Checking thresholds..."
+                    chmod +x test/check.threesholds.sh
+                    ./test/check.threesholds.sh results/results.csv
+                '''
+            }
+        }
         
         stage('Collect Results') {
             steps {
                 // Now results are guaranteed to be in ${OUT_DIR}
                 archiveArtifacts artifacts: "${RESULTS_DIR}/**", fingerprint: true
             }
-        }
-    }
-
-    stage('Check Thresholds') {
-        steps {
-            sh '''
-                echo "Checking thresholds..."
-                chmod +x test/check.threesholds.sh
-                ./test/check.threesholds.sh results/results.csv
-            '''
         }
     }
     
