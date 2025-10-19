@@ -6,10 +6,11 @@ pipeline {
         JMETER_IMAGE = 'justb4/jmeter:latest' // Or your image name
         JMETER_CONTAINER_NAME = "jmeter-performance-${BUILD_NUMBER}"
         TEST_PLAN_DIR = 'test-plans'
+        TEST_CONFIG_DIR = 'config'
         RESULTS_DIR = 'results'
-        TEST_PROPS = 'config/test.properties'
+        TEST_CONFIG_FILE = 'test.properties'
         TEST_PLAN_FILE = 'api-performance.jmx' 
-        THRESHOLD_SCRIPT = 'test/check.threesholds.sh'
+        THRESHOLD_SCRIPT = 'check.threesholds.sh'
         OUT_DIR = "${WORKSPACE}/${RESULTS_DIR}"
     }
 
@@ -53,6 +54,7 @@ pipeline {
                     echo "=== Copying test plan directory ${TEST_PLAN_DIR}/ to container ==="
                     # Copy the whole test-plans directory contents
                     docker cp ${TEST_PLAN_DIR}/. ${JMETER_CONTAINER_NAME}:/work/jmeter/
+                    docker cp ${TEST_CONFIG_DIR}/. ${JMETER_CONTAINER_NAME}:/work/jmeter/
                     
                     # 6. Verify files are copied
                     echo "=== DEBUG: Container JMeter directory contents ==="
@@ -66,7 +68,7 @@ pipeline {
                         -l /work/out/results.jtl \
                         -e -o /work/out/jmeter-report \
                         -f \
-                        -p /work/jmeter/config/test.properties \
+                        -p /work/jmeter/${TEST_CONFIG_FILE} \
                     # -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org
                     JMETER_EXIT_CODE=\$?
                     echo "=== JMeter exit code: \$JMETER_EXIT_CODE ==="
@@ -95,8 +97,8 @@ pipeline {
             steps {
                 sh '''
                     echo "Checking thresholds..."
-                    chmod +x test/check.threesholds.sh
-                    ./test/check.threesholds.sh results/results.csv
+                    chmod +x work/jmeter/check.threesholds.sh
+                    ./work/jmeter/check.threesholds.sh results/results.csv
                 '''
             }
         }
