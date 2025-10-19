@@ -70,10 +70,7 @@ pipeline {
                     echo "=== Copying results from container to workspace ${OUT_DIR} ==="
                     docker cp ${JMETER_CONTAINER_NAME}:/work/out/. ${OUT_DIR}/
                     
-                    # 9. Clean up and remove container
-                    docker rm -f ${JMETER_CONTAINER_NAME} >/dev/null 2>&1 || true
-                    
-                    # 10. Verify results
+                    # 9. Verify results
                     if [ -f "${OUT_DIR}/results.jtl" ]; then
                         echo "=== SUCCESS: Results generated ==="
                     else
@@ -93,6 +90,9 @@ pipeline {
                         chmod +x /work/jmeter/test/check.threesholds.sh &&
                         /work/jmeter/test/check.threesholds.sh /work/out/results.csv
                     "
+
+                    Clean up and remove container
+                    docker rm -f ${JMETER_CONTAINER_NAME} >/dev/null 2>&1 || true
                 '''
             }
         }
