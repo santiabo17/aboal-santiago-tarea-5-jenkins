@@ -90,8 +90,8 @@ pipeline {
             steps {
                 sh '''
                     echo "Checking thresholds..."
-                    chmod +x work/jmeter/check.threesholds.sh
-                    ./work/jmeter/check.threesholds.sh results/results.csv
+                    chmod +x work/jmeter/check.thresholds.sh
+                    ./work/jmeter/check.thresholds.sh results/results.csv
                 '''
             }
         }
