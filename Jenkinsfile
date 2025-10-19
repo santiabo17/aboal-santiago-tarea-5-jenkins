@@ -7,9 +7,9 @@ pipeline {
         JMETER_CONTAINER_NAME = "jmeter-performance-${BUILD_NUMBER}"
         TEST_PLAN_DIR = 'test-plans'
         RESULTS_DIR = 'results'
-        
+        TEST_PROPS = 'config/test.properties'
         TEST_PLAN_FILE = 'api-performance.jmx' 
-        
+        THRESHOLD_SCRIPT = 'test/check.threesholds.sh'
         OUT_DIR = "${WORKSPACE}/${RESULTS_DIR}"
     }
 
@@ -20,33 +20,8 @@ pipeline {
                 echo "Code checked out to: ${WORKSPACE}"
             }
         }
-        
-        // stage('Run Performance Tests') {
-        //     steps {
-        //         sh """
-        //             echo "=== Starting JMeter Performance Tests ==="
 
-        //             # Clean old results
-        //             rm -rf results/*
-                    
-        //             # Run JMeter using docker-compose
-        //             docker-compose run --rm jmeter-master \
-        //             -n -t /test-plans/api-performance.jmx \
-        //             -l /results/results.jtl \
-        //             -e -o /results/html-report \
-        //             -Jthreads=50 -Jrampup=120 -Jbase.url=httpbin.org \
-        //             -f
-
-        //             # Verify results
-        //             if [ ! -f results/results.jtl ]; then
-        //                 echo "ERROR: No results generated!"
-        //                 exit 1
-        //             fi
-        //         """
-        //     }
-        // }
-
-        stage('Run Performance Tests (Docker CP Method)') {
+        stage('Run Performance Tests') {
             steps {
                 sh """
                     echo "=== Starting JMeter Performance Tests (Docker CP) ==="
@@ -59,11 +34,17 @@ pipeline {
                     docker rm -f ${JMETER_CONTAINER_NAME} >/dev/null 2>&1 || true
 
                     # 3. Create and start container in background (using a non-root user for security, if possible)
-                    docker run -d \
-                        --name ${JMETER_CONTAINER_NAME} \
-                        --user=root \
-                        --entrypoint=sleep \
-                        ${JMETER_IMAGE} infinity
+                    // docker run -d \
+                    //     --name ${JMETER_CONTAINER_NAME} \
+                    //     --user=root \
+                    //     --entrypoint=sleep \
+                    //     ${JMETER_IMAGE} infinity
+
+                    docker run --rm -v $PWD:/test -w /test \
+                        justb4/jmeter:5.6.3 \
+                        -n -t test-plans/api-performance.jmx \
+                        -p config/test.properties \
+                        -l results/results.csv
                     
                     # 4. Create directory structure in the running container (as root)
                     docker exec ${JMETER_CONTAINER_NAME} mkdir -p /work/jmeter /work/out
@@ -114,6 +95,16 @@ pipeline {
                 // Now results are guaranteed to be in ${OUT_DIR}
                 archiveArtifacts artifacts: "${RESULTS_DIR}/**", fingerprint: true
             }
+        }
+    }
+
+    stage('Check Thresholds') {
+        steps {
+            sh '''
+                echo "Checking thresholds..."
+                chmod +x test/check.threesholds.sh
+                ./test/check.threesholds.sh results/results.csv
+            '''
         }
     }
     
