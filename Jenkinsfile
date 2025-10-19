@@ -35,17 +35,11 @@ pipeline {
                     docker rm -f ${JMETER_CONTAINER_NAME} >/dev/null 2>&1 || true
 
                     # 3. Create and start container in background (using a non-root user for security, if possible)
-                    # docker run -d \
-                    #     --name ${JMETER_CONTAINER_NAME} \
-                    #     --user=root \
-                    #     --entrypoint=sleep \
-                    #     ${JMETER_IMAGE} infinity
-
-                    docker run --rm -v $PWD:/test -w /test \
-                        ${JMETER_IMAGE} \
-                        -n -t test-plans/api-performance.jmx \
-                        -p config/test.properties \
-                        -l results/results.csv
+                    docker run -d \
+                        --name ${JMETER_CONTAINER_NAME} \
+                        --user=root \
+                        --entrypoint=sleep \
+                        ${JMETER_IMAGE} infinity
                     
                     # 4. Create directory structure in the running container (as root)
                     docker exec ${JMETER_CONTAINER_NAME} mkdir -p /work/jmeter /work/out
