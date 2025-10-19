@@ -89,9 +89,10 @@ pipeline {
         stage('Check Thresholds') {
             steps {
                 sh '''
-                    echo "Checking thresholds..."
-                    chmod +x work/jmeter/check.thresholds.sh
-                    ./work/jmeter/check.thresholds.sh results/results.csv
+                    docker exec ${JMETER_CONTAINER_NAME} sh -c "
+                        chmod +x /work/jmeter/test/check.threesholds.sh &&
+                        /work/jmeter/test/check.threesholds.sh /work/out/results.csv
+                    "
                 '''
             }
         }
